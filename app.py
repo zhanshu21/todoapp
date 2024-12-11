@@ -38,7 +38,7 @@ with app.app_context():
 
 @app.route("/")
 def index():
-    todo_list = Todo.query.all()
+    todo_list = Todo.query.order_by('id').all()
     return render_template('index.html', data = todo_list)
 
 @app.route("/todos/create", methods = ['POST'])
@@ -58,9 +58,31 @@ def createTodos():
     # return newly add the toto.description as json file
     finally:
         if not error:
+            db.session.close()
             return jsonify({
                 'description': new_todo.description
             })
+        else:
+            abort(400)
+
+@app.route("/todos/<todoId>/update-completed", methods = ['POST'])
+def editCompleted(todoId):
+    # fetch the input data
+    # new_data = request.form.get('description') # synchrounous method
+    error = False
+    try:
+        completed = request.get_json()['completed']
+        todo = Todo.query.get(todoId)
+        todo.completed = completed
+        print(todo)
+        db.session.commit()
+    except: # if try... is failed
+        db.session.rollback()
+        error = True
+    # return newly add the toto.description as json file
+    finally:
+        if not error:
+            return redirect(url_for('index'))
         else:
             abort(400)
 
