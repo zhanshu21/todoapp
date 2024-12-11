@@ -1,0 +1,74 @@
+<html>
+    <head>
+        <title>Todo App</title>
+    </head>
+    <body>
+        <style>
+            ul {
+                list-style: none;
+                padding:0;
+                margin: 0;
+            }
+        </style>
+        <form id='form' method="post" action="/todos/create">
+            <input type="text" name="description" id="description"/>
+            <input type="submit" value="Create" />
+        </form>
+        <ul id="todo">
+            {% for d in data %}
+            <li><input class="completed" type="checkbox" {% if d.completed %} checked {% endif %}>{{d.description}}</li>
+            {% endfor %}
+        </ul>
+        <!-- <div class = "hidden" id = "error" > Something went wrong! </div> -->
+    </body>
+    <script>
+        // create new todo
+        document.getElementById('form').onsubmit = (e) => {  //trigger
+            e.preventDefault();  //stops the form from refreshing the page.
+            // Get the input value
+            const description = document.getElementById('description').value;
+
+            // Validate the input
+            if (!description.trim()) {
+                alert("Please enter a valid description.");
+                return;
+            }
+            fetch('/todos/create',{ //send input data as a Json aobject to the '/todos/creat' endpont on the server
+                method: 'POST',
+                body: JSON.stringify({ description: description }),
+                headers: { 'Content-Type': 'application/json' } //specifies the data being sent in JSON format, must include
+            })
+            .then((response) => { //the server respons with JSON data
+                return response.json();
+            }) 
+            .then((jsonResponce) => {
+                console.log(jsonResponce);
+                const liItem = document.createElement('li');
+                liItem.innerHTML = jsonResponce['description'];
+                document.getElementById('todo').appendChild(liItem);
+            })
+            .catch ((error)=>{ //error handling
+                console.log(error);
+                // document.getElementById('error').className='';
+                alert("something is wrong!")
+            })
+        }
+
+        // update completed for todo
+        const checkboxes = document.querySelectorAll('.completed');
+        for (let i = 0 ; i < checkboxes.length ; i++) {
+            const checkbox = checkboxes[i];
+            checkbox.onchange = ((e) => {
+                // console.log(e);
+                const completed_update = e.target.checked;
+                fetch ('/todo/update-completed'),{
+                    method:"POST",
+                    body: JSON.stringify({'completed': completed_update}),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }
+            })
+        }
+    </script>
+</html>
