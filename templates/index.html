@@ -41,10 +41,14 @@
             .then((response) => { //the server respons with JSON data
                 return response.json();
             }) 
-            .then((jsonResponce) => {
-                console.log(jsonResponce);
+            .then((jsonResponse) => {
+                console.log(jsonResponse);
                 const liItem = document.createElement('li');
-                liItem.innerHTML = jsonResponce['description'];
+                // liItem.innerHTML = jsonResponce['description'];
+                liItem.innerHTML = `
+                    <input data-id="${jsonResponse.id}" class="completed" type="checkbox">
+                    ${jsonResponse['description']}
+                `;
                 document.getElementById('todo').appendChild(liItem);
             })
             .catch ((error)=>{ //error handling

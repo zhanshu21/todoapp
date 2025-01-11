@@ -58,10 +58,12 @@ def createTodos():
     # return newly add the toto.description as json file
     finally:
         if not error:
-            db.session.close()
             return jsonify({
-                'description': new_todo.description
+                'id': new_todo.id,
+                'description': new_todo.description,
+                'completed': new_todo.completed
             })
+            db.session.close()
         else:
             abort(400)
 
