@@ -57,3 +57,34 @@ for (let i = 0 ; i < checkboxes.length ; i++) {
         })    
     })
 }
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const deleteButtons = document.querySelectorAll('.delete');
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', async (event) => {
+            console.log(event.target);
+            const todoId = event.target.getAttribute('data-id');
+            console.log(todoId);
+
+            try {
+                const response = await fetch (`/todos/${todoId}/delete`,{
+                    method:"POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const item = event.target.closest('li');
+                    item.remove();
+                } else {
+                    console.error('Failed to delete');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+});

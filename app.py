@@ -88,5 +88,24 @@ def editCompleted(todoId):
         else:
             abort(400)
 
+@app.route("/todos/<todoId>/delete", methods = ['POST'])
+def delete_todo(todoId):
+    # fetch the input data
+    # new_data = request.form.get('description') # synchrounous method
+    error = False
+    try:
+        todo = Todo.query.get(todoId)
+        db.session.delete(todo)
+        db.session.commit()
+    except: # if try... is failed
+        db.session.rollback()
+        error = True
+    # return newly add the toto.description as json file
+    finally:
+        if not error:
+            return redirect(url_for('index'))
+        else:
+            abort(400)
+
 if __name__ == "__main__":
     app.run(debug=True)
