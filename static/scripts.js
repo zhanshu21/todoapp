@@ -22,8 +22,11 @@ document.getElementById('form').onsubmit = (e) => {  //trigger
         const liItem = document.createElement('li');
         // liItem.innerHTML = jsonResponce['description'];
         liItem.innerHTML = `
-            <input data-id="${jsonResponse.id}" class="completed" type="checkbox">
-            ${jsonResponse['description']}
+            <div class="item-container">
+                <input data-id="${jsonResponse.id}" class="completed" type="checkbox">
+                ${jsonResponse['description']}
+            </div>
+            <button class="delete" data-id="${jsonResponse.id}">&cross;</button>
         `;
         document.getElementById('todo').appendChild(liItem);
     })
